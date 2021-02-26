@@ -36,7 +36,6 @@ public class BillboardController : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             m_anim.Play("Show");
-            Debug.Log("666");
             if (m_showSfx && m_audio)
             {
                 m_audio.PlayOneShot(m_showSfx);
@@ -50,7 +49,6 @@ public class BillboardController : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             m_anim.Play("hide");
-            Debug.Log("555");
             if (m_hideSfx && m_hideSfx)
             {
                 m_audio.PlayOneShot(m_hideSfx);
