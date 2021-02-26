@@ -23,90 +23,45 @@ public class HumanoidController : MonoBehaviour
 
     Animator m_anim;
     Rigidbody m_rb = null;
-    public PlayerState m_pState;
 
     void Start()
     {
-        m_pState = PlayerState.Default;
         m_rb = GetComponent<Rigidbody>();
         m_anim = GetComponent<Animator>();
     }
 
     void Update()
     {
-        switch (m_pState)
+        // 方向の入力を取得し、方向を求める
+        h = Input.GetAxisRaw("Horizontal");
+        // 入力方向のベクトルを組み立てる
+        Vector3 dir = Vector3.right * h;
+
+        if (dir == Vector3.zero)
         {
-            case PlayerState.Default:
-                // 方向の入力を取得し、方向を求める
-                h = Input.GetAxisRaw("Horizontal");
-                // 入力方向のベクトルを組み立てる
-                Vector3 dir = Vector3.right * h;
+            // 方向の入力がニュートラルの時は、y 軸方向の速度を保持するだけ
+            m_rb.velocity = new Vector3(0f, m_rb.velocity.y, 0f);
+        }
+        else
+        {
+            // オブジェクトを基準に入力が左右=左右にキャラクターを向ける
+            dir = m_transformTranslator.TransformDirection(dir);
+            dir.y = 0;
 
-                if (dir == Vector3.zero)
-                {
-                    // 方向の入力がニュートラルの時は、y 軸方向の速度を保持するだけ
-                    m_rb.velocity = new Vector3(0f, m_rb.velocity.y, 0f);
-                }
-                else
-                {
-                    // オブジェクトを基準に入力が左右=左右にキャラクターを向ける
-                    dir = m_transformTranslator.TransformDirection(dir);
-                    dir.y = 0;
+            //入力方向に滑らかに回転させる
+            Quaternion targetRotation = Quaternion.LookRotation(dir);
+            this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * m_turnSpeed);  // Slerp を使うのがポイント
 
-                    //入力方向に滑らかに回転させる
-                    Quaternion targetRotation = Quaternion.LookRotation(dir);
-                    this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * m_turnSpeed);  // Slerp を使うのがポイント
+            Vector3 velo = dir.normalized * m_movingSpeed; // 入力した方向に移動する
+            velo.y = m_rb.velocity.y;   // ジャンプした時の y 軸方向の速度を保持する
+            m_rb.velocity = velo;   // 計算した速度ベクトルをセットする
 
-                    Vector3 velo = dir.normalized * m_movingSpeed; // 入力した方向に移動する
-                    velo.y = m_rb.velocity.y;   // ジャンプした時の y 軸方向の速度を保持する
-                    m_rb.velocity = velo;   // 計算した速度ベクトルをセットする
-
-                    // ジャンプの入力を取得し、接地している時に押されていたらジャンプする
-                    if (Input.GetButtonDown("Jump") && IsGrounded())
-                    {
-                        m_rb.AddForce(Vector3.up * m_jumpPower, ForceMode.Impulse);
-                        m_anim.SetTrigger("Jump");
-                    }
-                }
-                break;
-            case PlayerState.Warping:
-                //「3秒間ワープゾーンにとどまるとワープします」と画面に表示（とりあえずコンソール）
-                Debug.Log("3秒間ワープゾーンにとどまるとワープします");
-
-                // 方向の入力を取得し、方向を求める
-                h = Input.GetAxisRaw("Horizontal");
-                // 入力方向のベクトルを組み立てる
-                Vector3 dir2 = Vector3.right * h;
-
-                if (dir2 == Vector3.zero)
-                {
-                    // 方向の入力がニュートラルの時は、y 軸方向の速度を保持するだけ
-                    m_rb.velocity = new Vector3(0f, m_rb.velocity.y, 0f);
-                }
-                else
-                {
-                    // オブジェクトを基準に入力が左右=左右にキャラクターを向ける
-                    dir = m_transformTranslator.TransformDirection(dir2);
-                    dir.y = 0;
-
-                    //入力方向に滑らかに回転させる
-                    Quaternion targetRotation = Quaternion.LookRotation(dir);
-                    this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * m_turnSpeed);  // Slerp を使うのがポイント
-
-                    Vector3 velo = dir.normalized * m_movingSpeed; // 入力した方向に移動する
-                    velo.y = m_rb.velocity.y;   // ジャンプした時の y 軸方向の速度を保持する
-                    m_rb.velocity = velo;   // 計算した速度ベクトルをセットする
-
-                    // ジャンプの入力を取得し、接地している時に押されていたらジャンプする
-                    if (Input.GetButtonDown("Jump") && IsGrounded())
-                    {
-                        m_rb.AddForce(Vector3.up * m_jumpPower, ForceMode.Impulse);
-                        m_anim.SetTrigger("Jump");
-                    }
-                }
-                break;
-            default:
-                break;
+            // ジャンプの入力を取得し、接地している時に押されていたらジャンプする
+            if (Input.GetButtonDown("Jump") && IsGrounded())
+            {
+                m_rb.AddForce(Vector3.up * m_jumpPower, ForceMode.Impulse);
+                m_anim.SetTrigger("Jump");
+            }
         }
     }
 
@@ -139,11 +94,6 @@ public class HumanoidController : MonoBehaviour
         m_anim.Play("Idle");
     }
 
-
-    public enum PlayerState
-    {
-        Default, Warping
-    }
     public enum TransformTranslatorState 
     { 
         Center, Left, Right

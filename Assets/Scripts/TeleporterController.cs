@@ -17,12 +17,13 @@ public class TeleporterController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        HumanoidController player = other.gameObject.GetComponent<HumanoidController>();
-        if (player)
+        if (other.gameObject.tag == "Player")
         {
-            if (player.m_pState != HumanoidController.PlayerState.Warping)
+            HumanoidController player = other.gameObject.GetComponent<HumanoidController>();
+            if (player)
             {
-                player.m_pState = HumanoidController.PlayerState.Warping;
+                Debug.Log("ワープポイントに3秒間乗ったらワープします");
+                ///ワープポイントに乗ったらパーティクルを開始
                 m_particle.Play();
             }
         }
@@ -52,12 +53,8 @@ public class TeleporterController : MonoBehaviour
         HumanoidController player = other.gameObject.GetComponent<HumanoidController>();
         if (player)
         {
-            if (player.m_pState != HumanoidController.PlayerState.Default)
-            {
-                player.m_pState = HumanoidController.PlayerState.Default;
-                m_particle.Stop();
-                m_timer = 0;
-            }
+            m_particle.Stop();
+            m_timer = 0;
         }
     }
 }

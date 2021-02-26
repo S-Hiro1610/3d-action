@@ -9,6 +9,7 @@ public class DirectionSwitcher : MonoBehaviour
     [SerializeField] Transform m_transformTranslatorSwitcher = null;
     Transform m_temporaryTransform;
     GameObject m_player = null;
+    //CinemachineVirtualCamera beforevcam = null;
 
     private void Start()
     {
@@ -54,6 +55,12 @@ public class DirectionSwitcher : MonoBehaviour
             var transposer = nextvcam.GetCinemachineComponent<CinemachineTransposer>();
             transposer.m_FollowOffset = m_player.transform.TransformDirection(Vector3.right * 10f + Vector3.up * 2f);
             nextvcam.MoveToTopOfPrioritySubqueue();
+            //if (beforevcam)  ////一つ前のvcamを破棄する処理
+            //{
+            //    CinemachineVirtualCamera.Destroy(beforevcam);
+            //    Debug.Log("aaa");
+            //}
+            //beforevcam = nextvcam;
         }
     }
 }
