@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /// 表示・非表示の切り替えはアニメーションで行うため、Animator に依存する。
 /// </summary>
 [RequireComponent(typeof(Animator))]
-public class TutorialTextController : MonoBehaviour
+public class BillboardController : MonoBehaviour
 {
     /// <summary>子オブジェクトの Canvas</summary>
     [SerializeField] Canvas m_canvas = null;
@@ -36,7 +36,7 @@ public class TutorialTextController : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             m_anim.Play("Show");
-
+            Debug.Log("666");
             if (m_showSfx && m_audio)
             {
                 m_audio.PlayOneShot(m_showSfx);
@@ -49,8 +49,8 @@ public class TutorialTextController : MonoBehaviour
         // Player が接触したら音を鳴らしてテキストを消す
         if (other.gameObject.CompareTag("Player"))
         {
-            m_anim.Play("Hide");
-
+            m_anim.Play("hide");
+            Debug.Log("555");
             if (m_hideSfx && m_hideSfx)
             {
                 m_audio.PlayOneShot(m_hideSfx);

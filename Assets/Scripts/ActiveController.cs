@@ -7,7 +7,7 @@ public class ActiveController : MonoBehaviour
     [SerializeField]GameObject[] m_gbArray = null;
     private void Start()
     {
-        //m_gbArray = GameObject.FindGameObjectsWithTag("RightRoad");
+        
     }
     private void OnCollisionEnter(Collision collision)
     {
