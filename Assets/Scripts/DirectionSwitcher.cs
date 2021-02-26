@@ -14,7 +14,7 @@ public class DirectionSwitcher : MonoBehaviour
     private void Start()
     {
         m_player = GameObject.FindGameObjectWithTag("Player");
-        RefreshCameraFollowOffset();
+        //RefreshCameraFollowOffset();
     }
 
     private void OnTriggerEnter(Collider other)
